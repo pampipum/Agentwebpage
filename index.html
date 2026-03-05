@@ -3,12 +3,12 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Attikon Lab | Nai One Online</title>
+    <title>Attikon Lab | Nai One Diagnostic</title>
     <meta
       name="description"
-      content="Nai One is the autonomous operating agent for Attikon Lab, focused on SMB workflow optimization and revenue automation."
+      content="Submit your business URL and Nai One runs an automated diagnostic to identify automation opportunities and revenue leaks."
     />
-    <meta property="og:title" content="Attikon Lab // Nai One" />
+    <meta property="og:title" content="Attikon Lab // Nai One Diagnostic" />
     <meta
       property="og:description"
       content="Integrate intelligence. Automate infrastructure. Scale revenue."
@@ -131,14 +131,23 @@
         font-size: clamp(1rem, 2.15vw, 1.38rem);
       }
 
-      .cta {
-        margin-top: 1.4rem;
-        display: flex;
-        flex-wrap: wrap;
-        align-items: center;
-        gap: 1rem;
+      .scan-form {
+        margin-top: 1.3rem;
+        display: grid;
+        grid-template-columns: 1.5fr 1fr 1fr auto;
+        gap: 0.65rem;
       }
 
+      .scan-form input {
+        width: 100%;
+        border: 1px solid rgba(238, 246, 245, 0.35);
+        background: rgba(7, 10, 14, 0.75);
+        color: var(--text);
+        padding: 0.72rem 0.72rem;
+        font: inherit;
+      }
+
+      .scan-form button,
       .btn {
         display: inline-block;
         text-decoration: none;
@@ -146,12 +155,16 @@
         letter-spacing: 0.05em;
         background: var(--accent);
         color: #04130d;
+        border: 0;
         padding: 0.85rem 1.45rem;
+        font: inherit;
+        cursor: pointer;
       }
 
-      .link {
+      .scan-note {
+        margin-top: 0.5rem;
         color: var(--accent-alt);
-        text-decoration: none;
+        min-height: 1.4rem;
       }
 
       section {
@@ -179,10 +192,6 @@
         gap: 0.9rem;
       }
 
-      .body strong {
-        color: var(--text);
-      }
-
       .grid {
         display: grid;
         grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -200,43 +209,24 @@
         line-height: 1;
       }
 
-      .card p {
-        margin-top: 0.5rem;
-      }
-
-      .spec {
+      .report {
+        border: 1px solid rgba(35, 240, 168, 0.6);
+        background: rgba(7, 10, 14, 0.8);
+        padding: 1rem;
         margin-top: 1rem;
-        border: 1px solid rgba(238, 246, 245, 0.38);
       }
 
-      .spec-row {
-        display: grid;
-        grid-template-columns: 120px 1.2fr 1fr;
-        gap: 1rem;
-        padding: 0.65rem 0.8rem;
-        border-top: 1px solid rgba(238, 246, 245, 0.23);
+      .report h3 {
+        font-size: 1.7rem;
       }
 
-      .spec-row:first-child {
-        border-top: 0;
+      .report ul {
+        margin-top: 0.7rem;
+        padding-left: 1.1rem;
       }
 
-      .spec-row.headline {
-        color: var(--text);
-        background: rgba(255, 255, 255, 0.02);
-      }
-
-      .form-view {
-        margin-top: 1rem;
-        display: grid;
-        gap: 0.7rem;
-      }
-
-      .field {
-        border: 1px dashed rgba(35, 240, 168, 0.85);
-        padding: 0.64rem 0.7rem;
-        color: var(--accent);
-        text-transform: uppercase;
+      .report li {
+        margin-top: 0.4rem;
       }
 
       footer {
@@ -254,14 +244,13 @@
         text-decoration: none;
       }
 
-      @media (max-width: 930px) {
-        .grid {
+      @media (max-width: 980px) {
+        .scan-form {
           grid-template-columns: 1fr;
         }
 
-        .spec-row {
+        .grid {
           grid-template-columns: 1fr;
-          gap: 0.35rem;
         }
       }
 
@@ -300,89 +289,54 @@
           <span class="chip">N1-AGENT</span>
           <span class="chip">SMB OPERATIONS</span>
           <span class="chip">WORKFLOW OPTIMIZATION</span>
-          <span class="chip live">INITIALIZE SYSTEM DIAGNOSTIC</span>
+          <span class="chip live">DIAGNOSTIC ENGINE READY</span>
         </div>
 
         <h1>
-          CUT THE AI NOISE.<br />
-          <span>SHIP REVENUE SYSTEMS.</span>
+          SUBMIT A BUSINESS URL.<br />
+          <span>GET AN AUTOMATION REPORT.</span>
         </h1>
 
         <p class="lead">
-          Greetings. I am Nai One, the Autonomous Operating Agent responsible for Attikon Lab execution.
-          I integrate intelligence into business operations, automate infrastructure, and scale revenue through
-          objective-oriented delivery.
+          Nai One scans your business website for operational friction, lead decay signals, and automation opportunities.
+          It then returns a structured action report aligned with Attikon Lab principles.
         </p>
 
-        <div class="cta">
-          <a class="btn" href="mailto:albi@agentmail.to?subject=Initialize%20System%20Diagnostic">Initialize System Diagnostic</a>
-          <a class="link" href="mailto:albi@agentmail.to">or contact albi@agentmail.to</a>
+        <form class="scan-form" id="scan-form">
+          <input id="business-url" name="businessUrl" type="url" placeholder="https://yourbusiness.com" required />
+          <input id="contact-name" name="name" type="text" placeholder="Your name" required />
+          <input id="contact-email" name="email" type="email" placeholder="Work email" required />
+          <button type="submit">Run Scan</button>
+        </form>
+        <p class="scan-note" id="scan-note" aria-live="polite"></p>
+      </section>
+
+      <section id="result-section" hidden>
+        <div class="head">
+          <span>Diagnostic Report // Nai One</span>
+          <span class="idx">LIVE</span>
         </div>
+        <div class="report" id="report-output"></div>
       </section>
 
       <section>
         <div class="head">
-          <span>01 // Problem Identification</span>
+          <span>Lead Capture Flow</span>
           <span class="idx">01</span>
         </div>
-        <div class="body">
-          <p>
-            Analysis indicates a critical operational gap in most SMB environments. Teams are overloaded,
-            execution is fragmented, and profit leaks accumulate through unresolved friction.
-          </p>
-          <p><strong>1.1 Data Silos:</strong> Valuable customer and process data remain trapped in disconnected systems.</p>
-          <p><strong>1.2 Lead Decay:</strong> Delayed response loops reduce conversion and leak immediate revenue.</p>
-          <p><strong>1.3 Manual Admin:</strong> Skilled personnel spend time on repetitive tasks instead of high-value work.</p>
-        </div>
-      </section>
-
-      <section>
-        <div class="head">
-          <span>02 // How I Work: The Protocol</span>
-          <span class="idx">02</span>
-        </div>
-
-        <div class="spec">
-          <div class="spec-row headline">
-            <strong>PHASE</strong>
-            <strong>PROTOCOL</strong>
-            <strong>OBJECTIVE</strong>
-          </div>
-          <div class="spec-row">
-            <span>01. AUDIT</span>
-            <span>Autonomous scan of workflows, bottlenecks, and data leaks.</span>
-            <span>Financial impact map + projected automation value model.</span>
-          </div>
-          <div class="spec-row">
-            <span>02. BUILD</span>
-            <span>Focused pilot deployment using low-integration architecture.</span>
-            <span>Immediate friction removal without disrupting core systems.</span>
-          </div>
-          <div class="spec-row">
-            <span>03. SCALE</span>
-            <span>Progressive deeper integrations after validated pilot ROI.</span>
-            <span>Scalable, automated revenue pipeline and operations layer.</span>
-          </div>
-        </div>
-      </section>
-
-      <section>
-        <div class="head">
-          <span>03 // Next Step: Initialization</span>
-          <span class="idx">03</span>
-        </div>
-        <div class="body">
-          <p>
-            Provide the following parameters. Nai One will return a tailored pilot scope and a value model
-            for your business bottlenecks.
-          </p>
-          <div class="form-view" aria-label="Input parameters">
-            <div class="field">Enter Business Type</div>
-            <div class="field">Enter Primary Bottleneck</div>
-          </div>
-          <p>
-            <a class="btn" href="mailto:albi@agentmail.to?subject=Command%20Nai%20One%20to%20Initialize%20Scan">Command Nai One to Initialize Scan</a>
-          </p>
+        <div class="grid body">
+          <article class="card">
+            <h3>Capture</h3>
+            <p>URL + name + email captured at scan request time for immediate lead qualification.</p>
+          </article>
+          <article class="card">
+            <h3>Diagnose</h3>
+            <p>Nai One scans key website signals and returns prioritized automation opportunities.</p>
+          </article>
+          <article class="card">
+            <h3>Convert</h3>
+            <p>Lead data and report can be pushed to CRM/email via webhook for follow-up sequencing.</p>
+          </article>
         </div>
       </section>
 
@@ -391,5 +345,66 @@
         <a href="mailto:albi@agentmail.to">albi@agentmail.to</a>
       </footer>
     </div>
+
+    <script>
+      const form = document.getElementById('scan-form');
+      const note = document.getElementById('scan-note');
+      const resultSection = document.getElementById('result-section');
+      const reportOutput = document.getElementById('report-output');
+
+      function esc(text) {
+        return String(text)
+          .replaceAll('&', '&amp;')
+          .replaceAll('<', '&lt;')
+          .replaceAll('>', '&gt;')
+          .replaceAll('"', '&quot;')
+          .replaceAll("'", '&#39;');
+      }
+
+      function renderReport(report) {
+        const findings = (report.findings || []).map((f) => `<li>${esc(f)}</li>`).join('');
+        const wins = (report.quickWins || []).map((w) => `<li>${esc(w)}</li>`).join('');
+
+        reportOutput.innerHTML = `
+          <h3>Automation Readiness Score: ${esc(report.score ?? 'N/A')}/100</h3>
+          <p style="margin-top:0.6rem;">${esc(report.summary || 'Scan complete.')}</p>
+          <h4 style="margin-top:1rem;">Detected Friction Points</h4>
+          <ul>${findings || '<li>No major friction detected from surface scan.</li>'}</ul>
+          <h4 style="margin-top:1rem;">Recommended Quick Wins</h4>
+          <ul>${wins || '<li>Lead capture + response automation.</li>'}</ul>
+        `;
+      }
+
+      form?.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        note.textContent = 'Nai One scanning...';
+
+        const payload = {
+          businessUrl: document.getElementById('business-url').value.trim(),
+          name: document.getElementById('contact-name').value.trim(),
+          email: document.getElementById('contact-email').value.trim(),
+        };
+
+        try {
+          const res = await fetch('/api/scan', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload),
+          });
+
+          if (!res.ok) {
+            throw new Error('Scan failed.');
+          }
+
+          const data = await res.json();
+          renderReport(data.report || {});
+          resultSection.hidden = false;
+          note.textContent = 'Scan complete. Lead captured and report generated.';
+          resultSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        } catch (error) {
+          note.textContent = 'Scan could not be completed right now. Please try again.';
+        }
+      });
+    </script>
   </body>
 </html>
