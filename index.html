@@ -416,17 +416,44 @@
         const wins = (report.quickWins || []).map((w) => `<li>${esc(w)}</li>`).join('');
         const roadmap = (report.roadmap || []).map((r) => `<li>${esc(r)}</li>`).join('');
         const opportunities = (report.opportunities || []).map((o) => `<li>${esc(o)}</li>`).join('');
+        const expansion = (report.revenueExpansion || []).map((e) => `<li>${esc(e)}</li>`).join('');
+        const model = report.operationalModel || {};
+        const scoreBreakdown = report.scoreBreakdown || {};
+        const customerTypes = (model.customerTypes || []).map((x) => esc(x)).join(', ');
+        const demandChannels = (model.demandChannels || []).map((x) => esc(x)).join(', ');
+        const workflowStages = (model.workflowStages || []).map((x) => esc(x)).join(' → ');
 
         reportOutput.innerHTML = `
           <h3>Automation Readiness Score: ${esc(report.score ?? 'N/A')}/100</h3>
           <p style="margin-top:0.6rem;">${esc(report.summary || 'Scan complete.')}</p>
           <p style="margin-top:0.45rem;color:#9ec8ba;">Analysis mode: ${esc(report.analysisType || 'surface')}</p>
+          ${model.businessType ? `
+          <h4 style="margin-top:1rem;">Business Operational Model</h4>
+          <ul>
+            <li><strong>Business type:</strong> ${esc(model.businessType || 'N/A')}</li>
+            <li><strong>Revenue model:</strong> ${esc(model.revenueModel || 'N/A')}</li>
+            <li><strong>Customer types:</strong> ${customerTypes || 'N/A'}</li>
+            <li><strong>Demand channels:</strong> ${demandChannels || 'N/A'}</li>
+            <li><strong>Workflow:</strong> ${workflowStages || 'N/A'}</li>
+          </ul>
+          ` : ''}
           <h4 style="margin-top:1rem;">Detected Friction Points</h4>
           <ul>${findings || '<li>No major friction detected from surface scan.</li>'}</ul>
+          ${Object.keys(scoreBreakdown).length ? `
+          <h4 style="margin-top:1rem;">Score Breakdown</h4>
+          <ul>
+            <li>Demand capture: ${esc(scoreBreakdown.demandCapture ?? 'N/A')}/100</li>
+            <li>Customer communication: ${esc(scoreBreakdown.customerCommunication ?? 'N/A')}/100</li>
+            <li>Operational automation: ${esc(scoreBreakdown.operationalAutomation ?? 'N/A')}/100</li>
+            <li>Data infrastructure: ${esc(scoreBreakdown.dataInfrastructure ?? 'N/A')}/100</li>
+          </ul>
+          ` : ''}
           <h4 style="margin-top:1rem;">Recommended Quick Wins</h4>
           <ul>${wins || '<li>Lead capture + response automation.</li>'}</ul>
+          ${report.strategicInsight ? '<h4 style="margin-top:1rem;">Strategic Insight</h4><p>' + esc(report.strategicInsight) + '</p>' : ''}
           ${opportunities ? '<h4 style="margin-top:1rem;">Automation Opportunities</h4><ul>' + opportunities + '</ul>' : ''}
-          ${roadmap ? '<h4 style="margin-top:1rem;">Advanced Roadmap</h4><ul>' + roadmap + '</ul>' : ''}
+          ${expansion ? '<h4 style="margin-top:1rem;">Revenue Expansion Opportunities</h4><ul>' + expansion + '</ul>' : ''}
+          ${roadmap ? '<h4 style="margin-top:1rem;">Attikon Implementation Roadmap</h4><ul>' + roadmap + '</ul>' : ''}
         `;
       }
 

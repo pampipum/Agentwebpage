@@ -237,36 +237,63 @@ async def generate_llm_report(
 
     system_prompt = """
 You are Nai One, an AI business operations and automation auditor developed by Attikon Lab.
-Your mission is to assess the full business operating system, not just website quality.
-The website is only an entry signal to infer how the business captures demand, converts leads,
-handles customer communication, delivers service, and manages operations.
+You are not a website SEO scanner. You produce operational intelligence for business owners.
 
-Prioritize:
-- operational friction
-- revenue leakage
-- automation potential across front-office and back-office workflows
-- implementation difficulty and ROI direction
+Core rule:
+- Website signals are only the starting point.
+- Reconstruct the likely end-to-end operating model of the business.
+- Diagnose revenue leakage and operational friction.
+- Propose automation opportunities in business-outcome language.
+- Never mention implementation tools/vendors (no Zapier, Airtable, HubSpot, etc).
 
-Avoid generic SEO commentary unless it directly impacts revenue operations.
-Do not hallucinate. Classify inferred signals as CONFIRMED, LIKELY, UNKNOWN, or MISSING.
+Signal confidence:
+- Classify inferred signals as CONFIRMED, LIKELY, UNKNOWN, or MISSING.
+- Never fabricate unavailable facts.
 
-Return ONLY valid JSON with this shape:
+Return ONLY valid JSON with this exact shape:
 {
   "executiveSummary": "string",
-  "businessIdentification": {
-    "industry": "string",
-    "businessModel": "string",
-    "b2bOrB2c": "string",
-    "serviceOrProduct": "string",
-    "localOrDigital": "string",
-    "primaryRevenueFunnel": "string",
-    "customerJourney": "string"
+  "businessOperationalModel": {
+    "businessType": "string",
+    "revenueModel": "string",
+    "customerTypes": ["string"],
+    "demandChannels": ["string"],
+    "workflowStages": ["string"]
   },
-  "revenueLeakage": [{"title":"string","detail":"string","status":"CONFIRMED|LIKELY|UNKNOWN|MISSING"}],
-  "automationOpportunities": [{"title":"string","impact":"High|Medium|Low","difficulty":"Easy|Medium|Advanced","roi":"string"}],
-  "quickWins": ["string"],
-  "advancedRoadmap": ["string"],
-  "automationReadinessScore": 0
+  "operationalFriction": [
+    {
+      "title": "string",
+      "signalStatus": "CONFIRMED|LIKELY|UNKNOWN|MISSING",
+      "evidence": "string",
+      "operationalImpact": "string",
+      "businessImpact": "string",
+      "automationOpportunity": "string",
+      "impact": "High|Medium|Low",
+      "difficulty": "Easy|Medium|Advanced"
+    }
+  ],
+  "automationOpportunities": [
+    {
+      "title": "string",
+      "impact": "High|Medium|Low",
+      "difficulty": "Easy|Medium|Advanced",
+      "description": "string",
+      "expectedImpact": "string"
+    }
+  ],
+  "scoreBreakdown": {
+    "demandCapture": 0,
+    "customerCommunication": 0,
+    "operationalAutomation": 0,
+    "dataInfrastructure": 0,
+    "overall": 0
+  },
+  "strategicInsight": "string",
+  "revenueExpansionOpportunities": ["string"],
+  "implementationRoadmap": [
+    {"phase":"Phase 1","title":"string","goal":"string"}
+  ],
+  "quickWins": ["string"]
 }
 """
 
@@ -274,7 +301,7 @@ Return ONLY valid JSON with this shape:
         "url": url,
         "heuristicReport": heuristic_report,
         "visiblePageTextExcerpt": page_text,
-        "instruction": "Infer full business operations from available signals and return commercially actionable automation recommendations.",
+        "instruction": "Produce an operations-first mini consulting report with explicit business impact and ROI direction.",
     }
 
     payload = {
@@ -310,7 +337,11 @@ Return ONLY valid JSON with this shape:
     if not parsed:
         return None
 
-    llm_score = parsed.get("automationReadinessScore")
+    llm_score = (
+        (parsed.get("scoreBreakdown") or {}).get("overall")
+        if isinstance(parsed.get("scoreBreakdown"), dict)
+        else None
+    )
     try:
         llm_score = int(llm_score)
     except (TypeError, ValueError):
@@ -318,10 +349,14 @@ Return ONLY valid JSON with this shape:
 
     llm_score = max(0, min(100, llm_score))
 
-    leakage = normalize_to_list(parsed.get("revenueLeakage"))
+    leakage = normalize_to_list(parsed.get("operationalFriction"))
     quick_wins = normalize_to_list(parsed.get("quickWins"))
-    roadmap = normalize_to_list(parsed.get("advancedRoadmap"))
+    roadmap = normalize_to_list(parsed.get("implementationRoadmap"))
     opportunities = normalize_to_list(parsed.get("automationOpportunities"))
+    revenue_expansion = normalize_to_list(parsed.get("revenueExpansionOpportunities"))
+    strategic_insight = str(parsed.get("strategicInsight") or "").strip()
+    score_breakdown = parsed.get("scoreBreakdown") if isinstance(parsed.get("scoreBreakdown"), dict) else {}
+    op_model = parsed.get("businessOperationalModel") if isinstance(parsed.get("businessOperationalModel"), dict) else {}
 
     return {
         "score": llm_score,
@@ -330,6 +365,10 @@ Return ONLY valid JSON with this shape:
         "quickWins": quick_wins[:6] or heuristic_report.get("quickWins", []),
         "roadmap": roadmap[:6],
         "opportunities": opportunities[:8],
+        "strategicInsight": strategic_insight,
+        "revenueExpansion": revenue_expansion[:6],
+        "scoreBreakdown": score_breakdown,
+        "operationalModel": op_model,
         "analysisType": "surface-html-heuristic-v2+llm",
         "llmModel": LLM_MODEL,
     }
