@@ -11,12 +11,12 @@ cp .env.example .env
 
 ## 2) Run locally
 ```bash
-uvicorn app.main:app --host 127.0.0.1 --port 8080
+uvicorn app.main:app --host 127.0.0.1 --port 8090
 ```
 
 Test:
-- `http://127.0.0.1:8080/health`
-- `http://127.0.0.1:8080/`
+- `http://127.0.0.1:8090/health`
+- `http://127.0.0.1:8090/`
 
 ## 3) systemd service
 ```bash
@@ -27,13 +27,13 @@ sudo systemctl status nai-one
 ```
 
 ## 4) Cloudflare Tunnel route
-Point your tunnel ingress to `http://127.0.0.1:8080` for `www.attikonlab.uk`.
+Point your tunnel ingress to `http://127.0.0.1:8090` for `www.attikonlab.uk`.
 
 Example ingress snippet:
 ```yaml
 ingress:
   - hostname: www.attikonlab.uk
-    service: http://127.0.0.1:8080
+    service: http://127.0.0.1:8090
   - service: http_status:404
 ```
 

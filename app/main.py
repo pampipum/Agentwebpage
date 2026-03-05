@@ -15,6 +15,7 @@ from pydantic import BaseModel, EmailStr
 BASE_DIR = Path(__file__).resolve().parent.parent
 DB_PATH = Path(os.getenv("NAI_DB_PATH", BASE_DIR / "data" / "nai_one.db"))
 WEBHOOK_URL = os.getenv("LEAD_WEBHOOK_URL", "").strip()
+TLS_VERIFY = os.getenv("NAI_TLS_VERIFY", "false").strip().lower() in {"1", "true", "yes"}
 
 app = FastAPI(title="Nai One API", version="1.0.0")
 
@@ -150,7 +151,7 @@ async def send_webhook(payload: dict[str, Any]) -> None:
         return
 
     try:
-        async with httpx.AsyncClient(timeout=10.0) as client:
+        async with httpx.AsyncClient(timeout=10.0, verify=TLS_VERIFY) as client:
             await client.post(WEBHOOK_URL, json=payload)
     except Exception:
         pass
@@ -178,7 +179,11 @@ async def scan(payload: ScanRequest, request: Request) -> dict[str, Any]:
         raise HTTPException(status_code=400, detail="Invalid business URL")
 
     try:
-        async with httpx.AsyncClient(follow_redirects=True, timeout=12.0) as client:
+        async with httpx.AsyncClient(
+            follow_redirects=True,
+            timeout=12.0,
+            verify=TLS_VERIFY,
+        ) as client:
             response = await client.get(
                 normalized,
                 headers={"User-Agent": "NaiOneDiagnosticBot/1.0 (+https://attikonlab.uk)"},

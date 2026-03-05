@@ -6,7 +6,7 @@ After=network.target
 User=root
 WorkingDirectory=/opt/attikonlab/Agentwebpage
 EnvironmentFile=/opt/attikonlab/Agentwebpage/.env
-ExecStart=/opt/attikonlab/Agentwebpage/.venv/bin/uvicorn app.main:app --host 127.0.0.1 --port 8080
+ExecStart=/opt/attikonlab/Agentwebpage/.venv/bin/uvicorn app.main:app --host 127.0.0.1 --port 8090
 Restart=always
 RestartSec=5
 

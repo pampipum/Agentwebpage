@@ -6,7 +6,7 @@ credentials-file: /etc/cloudflared/<TUNNEL-UUID>.json
 
 ingress:
   - hostname: www.attikonlab.uk
-    service: http://127.0.0.1:8080
+    service: http://127.0.0.1:8090
   - hostname: attikonlab.uk
-    service: http://127.0.0.1:8080
+    service: http://127.0.0.1:8090
   - service: http_status:404
