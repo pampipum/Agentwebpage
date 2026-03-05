@@ -1,5 +1,6 @@
 import json
 import os
+import re
 import sqlite3
 from datetime import datetime, timezone
 from pathlib import Path
@@ -72,12 +73,21 @@ def build_report(html: str, url: str) -> dict[str, Any]:
     quick_wins: list[str] = []
     score = 100
 
+    reservation_mail_match = re.search(r"mailto:([^\"'>]*reserv[^\"'>]*)", lower)
+    pdf_link_count = len(re.findall(r"href=[\"'][^\"']+\\.pdf[\"']", lower))
+    language_hint_count = len(
+        set(re.findall(r"/(deutsch|english|italiano|francais|français|espanol|español)/", lower))
+    )
+    cta_links_count = len(re.findall(r"<a\\b", lower))
+
     checks = {
         "has_title": "<title>" in lower,
         "has_meta_description": "name=\"description\"" in lower or "name='description'" in lower,
         "has_form": "<form" in lower,
-        "has_contact_action": "mailto:" in lower or "tel:" in lower,
+        "has_mailto": "mailto:" in lower,
+        "has_tel": "tel:" in lower,
         "has_booking_intent": any(k in lower for k in ["book", "reservation", "appointment", "quote", "schedule"]),
+        "has_local_business_schema": "localbusiness" in lower or "restaurant" in lower and "application/ld+json" in lower,
     }
 
     if not checks["has_title"]:
@@ -95,7 +105,7 @@ def build_report(html: str, url: str) -> dict[str, Any]:
         findings.append("No visible lead intake form detected.")
         quick_wins.append("Deploy a short intake form with immediate auto-response.")
 
-    if not checks["has_contact_action"]:
+    if not (checks["has_mailto"] or checks["has_tel"]):
         score -= 15
         findings.append("No one-tap contact action (email/phone) detected.")
         quick_wins.append("Add direct contact actions in hero and footer for low-friction conversion.")
@@ -110,6 +120,34 @@ def build_report(html: str, url: str) -> dict[str, Any]:
         findings.append("Website uses HTTP instead of HTTPS.")
         quick_wins.append("Force HTTPS across all pages to improve trust and conversion confidence.")
 
+    if reservation_mail_match and not checks["has_form"]:
+        score -= 8
+        reservation_mail = reservation_mail_match.group(1)
+        findings.append(
+            f"Reservations appear email-driven (evidence: {reservation_mail}), which can slow response and drop conversions."
+        )
+        quick_wins.append("Add instant reservation request flow with auto-confirmation and operator queue.")
+
+    if pdf_link_count > 0:
+        score -= 6
+        findings.append(f"Detected {pdf_link_count} PDF link(s); document-based flows often add friction on mobile.")
+        quick_wins.append("Convert high-value PDFs (menu/intake) into mobile-native interactive pages.")
+
+    if language_hint_count <= 1:
+        score -= 5
+        findings.append("Limited multi-language signals detected; tourist conversion may be constrained.")
+        quick_wins.append("Add a lightweight multilingual entry layer for key booking/intake flows.")
+
+    if cta_links_count < 8:
+        score -= 4
+        findings.append("Low CTA/link density detected on page surface.")
+        quick_wins.append("Add clear CTA hierarchy (Book / Call / Message) above the fold.")
+
+    if not checks["has_local_business_schema"]:
+        score -= 4
+        findings.append("No clear LocalBusiness structured data signal detected.")
+        quick_wins.append("Implement LocalBusiness schema for better local visibility and trust signals.")
+
     if not findings:
         findings.append("No major structural issues in the surface scan; workflow-level audit recommended.")
         quick_wins.append("Run operational workflow audit for response time and handoff automation.")
@@ -118,9 +156,10 @@ def build_report(html: str, url: str) -> dict[str, Any]:
 
     return {
         "score": score,
-        "summary": "Nai One completed a surface diagnostic and prioritized high-leverage automation actions.",
+        "summary": "Nai One completed an evidence-based surface diagnostic and prioritized high-leverage automation actions.",
         "findings": findings,
         "quickWins": quick_wins,
+        "analysisType": "surface-html-heuristic-v2",
     }
 
 
