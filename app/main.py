@@ -290,9 +290,13 @@ Return ONLY valid JSON with this exact shape:
   },
   "strategicInsight": "string",
   "revenueExpansionOpportunities": ["string"],
+  "aiAgentDeploymentPlan": ["string"],
+  "systemsToConnect": ["string"],
+  "expectedBusinessOutcomes": ["string"],
   "implementationRoadmap": [
     {"phase":"Phase 1","title":"string","goal":"string"}
   ],
+  "nextStep": "string",
   "quickWins": ["string"]
 }
 """
@@ -301,7 +305,7 @@ Return ONLY valid JSON with this exact shape:
         "url": url,
         "heuristicReport": heuristic_report,
         "visiblePageTextExcerpt": page_text,
-        "instruction": "Produce an operations-first mini consulting report with explicit business impact and ROI direction.",
+        "instruction": "Produce an operations-first mini consulting report and include AI agent deployment guidance where justified.",
     }
 
     payload = {
@@ -354,7 +358,11 @@ Return ONLY valid JSON with this exact shape:
     roadmap = normalize_to_list(parsed.get("implementationRoadmap"))
     opportunities = normalize_to_list(parsed.get("automationOpportunities"))
     revenue_expansion = normalize_to_list(parsed.get("revenueExpansionOpportunities"))
+    deployment_plan = normalize_to_list(parsed.get("aiAgentDeploymentPlan"))
+    systems_to_connect = normalize_to_list(parsed.get("systemsToConnect"))
+    expected_outcomes = normalize_to_list(parsed.get("expectedBusinessOutcomes"))
     strategic_insight = str(parsed.get("strategicInsight") or "").strip()
+    next_step = str(parsed.get("nextStep") or "").strip()
     score_breakdown = parsed.get("scoreBreakdown") if isinstance(parsed.get("scoreBreakdown"), dict) else {}
     op_model = parsed.get("businessOperationalModel") if isinstance(parsed.get("businessOperationalModel"), dict) else {}
 
@@ -367,6 +375,10 @@ Return ONLY valid JSON with this exact shape:
         "opportunities": opportunities[:8],
         "strategicInsight": strategic_insight,
         "revenueExpansion": revenue_expansion[:6],
+        "deploymentPlan": deployment_plan[:8],
+        "systemsToConnect": systems_to_connect[:8],
+        "expectedOutcomes": expected_outcomes[:8],
+        "nextStep": next_step,
         "scoreBreakdown": score_breakdown,
         "operationalModel": op_model,
         "analysisType": "surface-html-heuristic-v2+llm",

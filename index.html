@@ -229,6 +229,14 @@
         margin-top: 0.4rem;
       }
 
+      .follow-cta {
+        margin-top: 1rem;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.7rem;
+        align-items: center;
+      }
+
       footer {
         margin-top: 4rem;
         border-top: 1px solid rgba(238, 246, 245, 0.35);
@@ -417,11 +425,19 @@
         const roadmap = (report.roadmap || []).map((r) => `<li>${esc(r)}</li>`).join('');
         const opportunities = (report.opportunities || []).map((o) => `<li>${esc(o)}</li>`).join('');
         const expansion = (report.revenueExpansion || []).map((e) => `<li>${esc(e)}</li>`).join('');
+        const deployment = (report.deploymentPlan || []).map((d) => `<li>${esc(d)}</li>`).join('');
+        const systems = (report.systemsToConnect || []).map((s) => `<li>${esc(s)}</li>`).join('');
+        const outcomes = (report.expectedOutcomes || []).map((o) => `<li>${esc(o)}</li>`).join('');
         const model = report.operationalModel || {};
         const scoreBreakdown = report.scoreBreakdown || {};
         const customerTypes = (model.customerTypes || []).map((x) => esc(x)).join(', ');
         const demandChannels = (model.demandChannels || []).map((x) => esc(x)).join(', ');
         const workflowStages = (model.workflowStages || []).map((x) => esc(x)).join(' → ');
+        const businessUrlValue = document.getElementById('business-url').value.trim();
+        const followSubject = encodeURIComponent(`Nai One Follow-Up: ${businessUrlValue || 'Business Audit'}`);
+        const followBody = encodeURIComponent(
+          `Hi Attikon Lab,%0D%0A%0D%0AI reviewed my Nai One audit and want a deployment follow-up.%0D%0AWebsite: ${businessUrlValue}%0D%0A%0D%0AName: ${document.getElementById('contact-name').value.trim()}%0D%0A`
+        );
 
         reportOutput.innerHTML = `
           <h3>Automation Readiness Score: ${esc(report.score ?? 'N/A')}/100</h3>
@@ -453,7 +469,15 @@
           ${report.strategicInsight ? '<h4 style="margin-top:1rem;">Strategic Insight</h4><p>' + esc(report.strategicInsight) + '</p>' : ''}
           ${opportunities ? '<h4 style="margin-top:1rem;">Automation Opportunities</h4><ul>' + opportunities + '</ul>' : ''}
           ${expansion ? '<h4 style="margin-top:1rem;">Revenue Expansion Opportunities</h4><ul>' + expansion + '</ul>' : ''}
+          ${systems ? '<h4 style="margin-top:1rem;">Systems To Connect</h4><ul>' + systems + '</ul>' : ''}
+          ${deployment ? '<h4 style="margin-top:1rem;">AI Agent Deployment Plan</h4><ul>' + deployment + '</ul>' : ''}
+          ${outcomes ? '<h4 style="margin-top:1rem;">Expected Business Outcomes</h4><ul>' + outcomes + '</ul>' : ''}
           ${roadmap ? '<h4 style="margin-top:1rem;">Attikon Implementation Roadmap</h4><ul>' + roadmap + '</ul>' : ''}
+          ${report.nextStep ? '<h4 style="margin-top:1rem;">Next Step</h4><p>' + esc(report.nextStep) + '</p>' : ''}
+          <div class="follow-cta">
+            <a class="btn" href="mailto:albi@agentmail.to?subject=${followSubject}&body=${followBody}">Request Deployment Follow-Up</a>
+            <a class="link" href="mailto:albi@agentmail.to?subject=${followSubject}">Send Full Report by Email</a>
+          </div>
         `;
       }
 
