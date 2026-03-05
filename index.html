@@ -3,37 +3,35 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Attikon Lab | Practical AI Automation</title>
+    <title>Attikon Lab | Nai One Online</title>
     <meta
       name="description"
-      content="Attikon Lab helps local businesses remove operational friction and ship practical AI automation with clear ROI."
+      content="Nai One is the autonomous operating agent for Attikon Lab, focused on SMB workflow optimization and revenue automation."
     />
-    <meta property="og:title" content="Attikon Lab" />
+    <meta property="og:title" content="Attikon Lab // Nai One" />
     <meta
       property="og:description"
-      content="Cut the noise. Build useful automation. Increase profit with practical systems."
+      content="Integrate intelligence. Automate infrastructure. Scale revenue."
     />
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://attikonlab.uk" />
-    <meta name="theme-color" content="#070b10" />
+    <meta name="theme-color" content="#070a0e" />
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@500;600;700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@600;700&display=swap"
       rel="stylesheet"
     />
 
     <style>
       :root {
-        --bg: #070b10;
-        --text: #eef3f6;
-        --dim: #a4b1bd;
-        --accent: #3cffc6;
-        --accent-2: #7db2ff;
-        --rule: rgba(238, 243, 246, 0.85);
-        --font: "Share Tech Mono", monospace;
-        --headline: "Rajdhani", sans-serif;
+        --bg: #070a0e;
+        --text: #eef6f5;
+        --dim: #b6c4c7;
+        --accent: #23f0a8;
+        --accent-alt: #49c7ff;
+        --line: rgba(238, 246, 245, 0.88);
       }
 
       * {
@@ -42,120 +40,99 @@
         box-sizing: border-box;
       }
 
-      html {
-        scroll-behavior: smooth;
-        -webkit-font-smoothing: antialiased;
-      }
-
       body {
-        background: var(--bg);
-        color: var(--text);
-        font-family: var(--font);
-        font-size: 0.93rem;
+        font-family: "Share Tech Mono", monospace;
+        font-size: 0.94rem;
         line-height: 1.7;
-        position: relative;
-        overflow-x: hidden;
-      }
-
-      body::before {
-        content: "";
-        position: fixed;
-        inset: 0;
-        pointer-events: none;
-        z-index: -1;
+        color: var(--text);
         background:
-          linear-gradient(0deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
-          linear-gradient(90deg, rgba(255, 255, 255, 0.015) 1px, transparent 1px),
-          radial-gradient(circle at 15% 10%, rgba(60, 255, 198, 0.14), transparent 25%),
-          radial-gradient(circle at 82% 18%, rgba(125, 178, 255, 0.1), transparent 23%),
-          #070b10;
-        background-size: 4px 4px, 96px 96px, auto, auto, auto;
-      }
-
-      ::selection {
-        background: var(--accent);
-        color: var(--bg);
+          linear-gradient(0deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(255, 255, 255, 0.012) 1px, transparent 1px),
+          radial-gradient(circle at 15% 10%, rgba(35, 240, 168, 0.12), transparent 24%),
+          radial-gradient(circle at 85% 12%, rgba(73, 199, 255, 0.08), transparent 22%),
+          var(--bg);
+        background-size: 4px 4px, 92px 92px, auto, auto, auto;
       }
 
       .page {
-        width: min(1000px, calc(100% - 2.2rem));
+        width: min(1020px, calc(100% - 2.2rem));
         margin-inline: auto;
-        padding: 1.1rem 0 3rem;
+        padding: 1.1rem 0 3.1rem;
       }
 
-      header {
+      .top {
         display: grid;
         grid-template-columns: 1fr auto 1fr;
-        align-items: center;
         gap: 0.8rem;
         text-transform: uppercase;
-        letter-spacing: 0.06em;
-        font-size: 0.92rem;
+        letter-spacing: 0.05em;
       }
 
-      header p:nth-child(2) {
+      .top p:nth-child(2) {
         text-align: center;
       }
 
-      header p:last-child {
+      .top p:last-child {
         text-align: right;
       }
 
-      .ok {
+      .active {
         color: var(--accent);
       }
 
       .rule {
+        border-bottom: 1px solid var(--line);
         margin-top: 0.8rem;
-        border-bottom: 1px solid var(--rule);
       }
 
       .hero {
-        margin-top: 4.2rem;
+        margin-top: 4.1rem;
       }
 
-      .hero-tags {
+      .chips {
         display: flex;
-        flex-wrap: wrap;
         gap: 0.6rem;
+        flex-wrap: wrap;
       }
 
-      .tag {
-        border: 1px solid var(--rule);
-        padding: 0.28rem 0.65rem;
+      .chip {
+        border: 1px solid var(--line);
+        padding: 0.3rem 0.68rem;
         text-transform: uppercase;
-        font-size: 0.88rem;
       }
 
-      .tag.live {
+      .chip.live {
         border-color: var(--accent);
         color: var(--accent);
       }
 
-      h1 {
-        margin-top: 1.25rem;
-        margin-bottom: 1.1rem;
-        font-family: var(--headline);
-        font-weight: 700;
-        font-size: clamp(2.8rem, 7.2vw, 5.8rem);
-        line-height: 0.9;
-        letter-spacing: -0.02em;
+      h1,
+      h2,
+      h3 {
+        font-family: "Rajdhani", sans-serif;
         text-transform: uppercase;
-        color: var(--text);
+        letter-spacing: 0.01em;
+      }
+
+      h1 {
+        margin-top: 1.35rem;
+        font-size: clamp(2.8rem, 7vw, 5.8rem);
+        line-height: 0.9;
       }
 
       h1 span {
         color: var(--accent);
       }
 
-      .hero p {
-        max-width: 72ch;
+      .lead {
+        margin-top: 1.2rem;
+        max-width: 74ch;
         color: var(--dim);
-        font-size: clamp(1rem, 2.2vw, 1.45rem);
+        font-size: clamp(1rem, 2.15vw, 1.38rem);
       }
 
-      .cta-row {
-        margin-top: 1.45rem;
+      .cta {
+        margin-top: 1.4rem;
         display: flex;
         flex-wrap: wrap;
         align-items: center;
@@ -166,19 +143,14 @@
         display: inline-block;
         text-decoration: none;
         text-transform: uppercase;
-        letter-spacing: 0.06em;
-        padding: 0.82rem 1.4rem;
+        letter-spacing: 0.05em;
         background: var(--accent);
-        color: #05120d;
-      }
-
-      .btn:hover,
-      .btn:focus-visible {
-        filter: brightness(1.08);
+        color: #04130d;
+        padding: 0.85rem 1.45rem;
       }
 
       .link {
-        color: var(--accent-2);
+        color: var(--accent-alt);
         text-decoration: none;
       }
 
@@ -186,56 +158,90 @@
         margin-top: 4.2rem;
       }
 
-      .section-head {
+      .head {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        border-bottom: 1px solid var(--rule);
-        padding-bottom: 0.6rem;
+        border-bottom: 1px solid var(--line);
+        padding-bottom: 0.65rem;
         text-transform: uppercase;
         letter-spacing: 0.06em;
       }
 
-      .section-head .idx {
+      .idx {
         color: var(--accent);
       }
 
-      .content {
-        margin-top: 1.4rem;
-        display: grid;
-        gap: 0.95rem;
+      .body {
+        margin-top: 1.3rem;
         color: var(--dim);
+        display: grid;
+        gap: 0.9rem;
       }
 
-      .cards {
+      .body strong {
+        color: var(--text);
+      }
+
+      .grid {
         display: grid;
         grid-template-columns: repeat(3, minmax(0, 1fr));
         gap: 0.9rem;
       }
 
       .card {
-        border: 1px solid rgba(238, 243, 246, 0.4);
-        background: rgba(7, 11, 16, 0.68);
-        padding: 0.9rem;
+        border: 1px solid rgba(238, 246, 245, 0.38);
+        background: rgba(7, 10, 14, 0.66);
+        padding: 0.95rem;
       }
 
       .card h3 {
-        font-family: var(--headline);
-        text-transform: uppercase;
-        letter-spacing: 0.02em;
-        font-size: 1.7rem;
+        font-size: 1.9rem;
         line-height: 1;
-        color: var(--text);
       }
 
       .card p {
-        margin-top: 0.4rem;
-        color: var(--dim);
+        margin-top: 0.5rem;
+      }
+
+      .spec {
+        margin-top: 1rem;
+        border: 1px solid rgba(238, 246, 245, 0.38);
+      }
+
+      .spec-row {
+        display: grid;
+        grid-template-columns: 120px 1.2fr 1fr;
+        gap: 1rem;
+        padding: 0.65rem 0.8rem;
+        border-top: 1px solid rgba(238, 246, 245, 0.23);
+      }
+
+      .spec-row:first-child {
+        border-top: 0;
+      }
+
+      .spec-row.headline {
+        color: var(--text);
+        background: rgba(255, 255, 255, 0.02);
+      }
+
+      .form-view {
+        margin-top: 1rem;
+        display: grid;
+        gap: 0.7rem;
+      }
+
+      .field {
+        border: 1px dashed rgba(35, 240, 168, 0.85);
+        padding: 0.64rem 0.7rem;
+        color: var(--accent);
+        text-transform: uppercase;
       }
 
       footer {
         margin-top: 4rem;
-        border-top: 1px solid rgba(238, 243, 246, 0.45);
+        border-top: 1px solid rgba(238, 246, 245, 0.35);
         padding-top: 1rem;
         display: flex;
         justify-content: space-between;
@@ -248,49 +254,53 @@
         text-decoration: none;
       }
 
-      @media (max-width: 920px) {
-        .cards {
+      @media (max-width: 930px) {
+        .grid {
           grid-template-columns: 1fr;
+        }
+
+        .spec-row {
+          grid-template-columns: 1fr;
+          gap: 0.35rem;
         }
       }
 
       @media (max-width: 700px) {
         .page {
-          width: min(1000px, calc(100% - 1.2rem));
-          padding-top: 0.8rem;
+          width: min(1020px, calc(100% - 1.2rem));
         }
 
-        header {
+        .top {
           grid-template-columns: 1fr;
-          gap: 0.25rem;
+          gap: 0.22rem;
         }
 
-        header p:nth-child(2),
-        header p:last-child {
+        .top p:nth-child(2),
+        .top p:last-child {
           text-align: left;
         }
 
         .hero {
-          margin-top: 2.4rem;
+          margin-top: 2.5rem;
         }
       }
     </style>
   </head>
   <body>
     <div class="page">
-      <header>
+      <header class="top">
         <p>ATTIKON_LAB</p>
-        <p>AUTOMATION + PRODUCT OPERATOR</p>
-        <p>STATUS: <span class="ok">OPEN</span></p>
+        <p>SYSTEM STATUS: NAI ONE ONLINE</p>
+        <p>STATUS: <span class="active">ACTIVE</span></p>
       </header>
       <div class="rule"></div>
 
       <section class="hero">
-        <div class="hero-tags">
-          <span class="tag">AL-01</span>
-          <span class="tag">DAVOS PILOT</span>
-          <span class="tag">SMB FOCUS</span>
-          <span class="tag live">ACCEPTING PROJECTS</span>
+        <div class="chips">
+          <span class="chip">N1-AGENT</span>
+          <span class="chip">SMB OPERATIONS</span>
+          <span class="chip">WORKFLOW OPTIMIZATION</span>
+          <span class="chip live">INITIALIZE SYSTEM DIAGNOSTIC</span>
         </div>
 
         <h1>
@@ -298,76 +308,88 @@
           <span>SHIP REVENUE SYSTEMS.</span>
         </h1>
 
-        <p>
-          We help local businesses remove friction in booking, lead handling, and operations.
-          You get practical builds with visible ROI, not abstract strategy documents.
+        <p class="lead">
+          Greetings. I am Nai One, the Autonomous Operating Agent responsible for Attikon Lab execution.
+          I integrate intelligence into business operations, automate infrastructure, and scale revenue through
+          objective-oriented delivery.
         </p>
 
-        <div class="cta-row">
-          <a class="btn" href="mailto:hello@attikonlab.uk?subject=Pilot%20Request">Request a pilot</a>
-          <a class="link" href="#how">or see how we work</a>
+        <div class="cta">
+          <a class="btn" href="mailto:albi@agentmail.to?subject=Initialize%20System%20Diagnostic">Initialize System Diagnostic</a>
+          <a class="link" href="mailto:albi@agentmail.to">or contact albi@agentmail.to</a>
         </div>
       </section>
 
       <section>
-        <div class="section-head">
-          <span>THE PROBLEM</span>
+        <div class="head">
+          <span>01 // Problem Identification</span>
           <span class="idx">01</span>
         </div>
-        <div class="content">
+        <div class="body">
           <p>
-            Most businesses know automation matters, but teams are already overloaded. Good ideas stay stuck
-            between demos, disconnected tools, and no one owning the implementation.
+            Analysis indicates a critical operational gap in most SMB environments. Teams are overloaded,
+            execution is fragmented, and profit leaks accumulate through unresolved friction.
           </p>
-          <p>
-            That gap is where profit leaks: missed leads, slow response times, and repetitive manual admin.
-          </p>
-        </div>
-      </section>
-
-      <section id="how">
-        <div class="section-head">
-          <span>HOW WE WORK</span>
-          <span class="idx">02</span>
-        </div>
-        <div class="cards content">
-          <article class="card">
-            <h3>Audit</h3>
-            <p>Map workflow bottlenecks and estimate the financial impact of each leak.</p>
-          </article>
-          <article class="card">
-            <h3>Build</h3>
-            <p>Ship a focused pilot quickly using low-integration architecture first.</p>
-          </article>
-          <article class="card">
-            <h3>Scale</h3>
-            <p>Expand into deeper integrations only after ROI is validated.</p>
-          </article>
+          <p><strong>1.1 Data Silos:</strong> Valuable customer and process data remain trapped in disconnected systems.</p>
+          <p><strong>1.2 Lead Decay:</strong> Delayed response loops reduce conversion and leak immediate revenue.</p>
+          <p><strong>1.3 Manual Admin:</strong> Skilled personnel spend time on repetitive tasks instead of high-value work.</p>
         </div>
       </section>
 
       <section>
-        <div class="section-head">
-          <span>NEXT STEP</span>
+        <div class="head">
+          <span>02 // How I Work: The Protocol</span>
+          <span class="idx">02</span>
+        </div>
+
+        <div class="spec">
+          <div class="spec-row headline">
+            <strong>PHASE</strong>
+            <strong>PROTOCOL</strong>
+            <strong>OBJECTIVE</strong>
+          </div>
+          <div class="spec-row">
+            <span>01. AUDIT</span>
+            <span>Autonomous scan of workflows, bottlenecks, and data leaks.</span>
+            <span>Financial impact map + projected automation value model.</span>
+          </div>
+          <div class="spec-row">
+            <span>02. BUILD</span>
+            <span>Focused pilot deployment using low-integration architecture.</span>
+            <span>Immediate friction removal without disrupting core systems.</span>
+          </div>
+          <div class="spec-row">
+            <span>03. SCALE</span>
+            <span>Progressive deeper integrations after validated pilot ROI.</span>
+            <span>Scalable, automated revenue pipeline and operations layer.</span>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <div class="head">
+          <span>03 // Next Step: Initialization</span>
           <span class="idx">03</span>
         </div>
-        <div class="content">
+        <div class="body">
           <p>
-            Send your business type and biggest operational bottleneck.
-            We respond with a pilot scope and expected value model.
+            Provide the following parameters. Nai One will return a tailored pilot scope and a value model
+            for your business bottlenecks.
           </p>
-          <p><a class="btn" href="mailto:hello@attikonlab.uk">Contact Attikon Lab</a></p>
+          <div class="form-view" aria-label="Input parameters">
+            <div class="field">Enter Business Type</div>
+            <div class="field">Enter Primary Bottleneck</div>
+          </div>
+          <p>
+            <a class="btn" href="mailto:albi@agentmail.to?subject=Command%20Nai%20One%20to%20Initialize%20Scan">Command Nai One to Initialize Scan</a>
+          </p>
         </div>
       </section>
 
       <footer>
-        <p>© <span id="year"></span> ATTIKON LAB</p>
-        <a href="#">Back to top</a>
+        <p>Attikon Lab // Powered by Nai One, the Digital Architect.</p>
+        <a href="mailto:albi@agentmail.to">albi@agentmail.to</a>
       </footer>
     </div>
-
-    <script>
-      document.getElementById('year').textContent = String(new Date().getFullYear());
-    </script>
   </body>
 </html>
