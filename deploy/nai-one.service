@@ -1,0 +1,14 @@
+[Unit]
+Description=Nai One FastAPI Service
+After=network.target
+
+[Service]
+User=root
+WorkingDirectory=/opt/attikonlab/Agentwebpage
+EnvironmentFile=/opt/attikonlab/Agentwebpage/.env
+ExecStart=/opt/attikonlab/Agentwebpage/.venv/bin/uvicorn app.main:app --host 127.0.0.1 --port 8080
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
