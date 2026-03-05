@@ -293,20 +293,20 @@
         </div>
 
         <h1>
-          TURN YOUR WEBSITE INTO A 24/7<br />
-          <span>SALES + AUTOMATION ENGINE.</span>
+          DIAGNOSE YOUR FULL BUSINESS SYSTEM.<br />
+          <span>NOT JUST YOUR WEBSITE.</span>
         </h1>
 
         <p class="lead">
-          Get a free operational analysis of your website and discover where automation can increase bookings,
-          capture more leads, and eliminate manual work.
+          Nai One audits how your business captures demand, handles responses, runs workflows, and leaks revenue.
+          Your website is only the entry signal. The report focuses on end-to-end operations.
         </p>
 
         <form class="scan-form" id="scan-form">
-          <input id="business-url" name="businessUrl" type="url" placeholder="Business website URL" required />
+          <input id="business-url" name="businessUrl" type="url" placeholder="Business website URL (starting signal)" required />
           <input id="contact-name" name="name" type="text" placeholder="Your name" required />
           <input id="contact-email" name="email" type="email" placeholder="Work email" required />
-          <button type="submit">Generate My Report</button>
+          <button type="submit">Generate Business Audit</button>
         </form>
         <p class="scan-note" id="scan-note" aria-live="polite"></p>
       </section>
@@ -326,16 +326,16 @@
         </div>
         <div class="grid body">
           <article class="card">
-            <h3>Detect</h3>
-            <p>Finds where inquiries are handled manually, bookings are slow, and lead capture is weak.</p>
+            <h3>Map The System</h3>
+            <p>Identifies your full demand-to-delivery flow: lead capture, booking, follow-up, and handoff operations.</p>
           </article>
           <article class="card">
-            <h3>Diagnose</h3>
-            <p>Maps operational friction and revenue leakage based on real website and process signals.</p>
+            <h3>Find Revenue Leaks</h3>
+            <p>Highlights where manual work, delayed responses, and disconnected tools are reducing conversion and margin.</p>
           </article>
           <article class="card">
-            <h3>Prescribe</h3>
-            <p>Generates a practical automation plan to improve response speed, conversion, and operations.</p>
+            <h3>Design Automation</h3>
+            <p>Produces a practical automation blueprint across customer communication, operations, and internal workflows.</p>
           </article>
         </div>
       </section>
@@ -348,15 +348,15 @@
         <div class="grid body">
           <article class="card">
             <h3>Readiness</h3>
-            <p>How prepared your business is to automate customer interactions and operations.</p>
+            <p>How prepared your business is to automate across front-office and back-office operations.</p>
           </article>
           <article class="card">
             <h3>Leakage</h3>
-            <p>Where potential customers drop before contacting or booking with your business.</p>
+            <p>Where potential customers and internal efficiency are lost across the full operating model.</p>
           </article>
           <article class="card">
             <h3>Opportunities</h3>
-            <p>Concrete actions for lead capture, booking flow, follow-up automation, and workflow efficiency.</p>
+            <p>Concrete automation opportunities for lead capture, scheduling, communication, retention, and operations.</p>
           </article>
         </div>
       </section>
@@ -372,7 +372,7 @@
             clinics, and property businesses that rely on their website to attract customers.
           </p>
           <p>
-            Nai One is built for owners who want execution, not theory.
+            Nai One is built for owners who want operational execution, not generic marketing advice.
           </p>
         </div>
       </section>
@@ -383,12 +383,15 @@
           <span class="idx">04</span>
         </div>
         <div class="body">
-          <p>Discover how automation could improve your business. Submit your website and get your report.</p>
+          <p>
+            Submit your website as the starting input. Nai One returns a full business operations audit with
+            prioritized automation moves and an ROI-focused roadmap.
+          </p>
         </div>
       </section>
 
       <footer>
-        <p>Attikon Lab // Automation Architecture for Modern Businesses // Powered by Nai One.</p>
+        <p>Attikon Lab // Business Systems Architecture // Powered by Nai One.</p>
         <a href="mailto:albi@agentmail.to">albi@agentmail.to</a>
       </footer>
     </div>
@@ -429,7 +432,7 @@
 
       form?.addEventListener('submit', async (event) => {
         event.preventDefault();
-        note.textContent = 'Nai One is generating your automation report...';
+        note.textContent = 'Nai One is generating your full business operations audit...';
 
         const payload = {
           businessUrl: document.getElementById('business-url').value.trim(),
@@ -451,7 +454,7 @@
           const data = await res.json();
           renderReport(data.report || {});
           resultSection.hidden = false;
-          note.textContent = 'Report ready. You can review findings and quick wins below.';
+          note.textContent = 'Audit ready. Review operational findings and automation roadmap below.';
           resultSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
         } catch (error) {
           note.textContent = 'Scan could not be completed right now. Please try again.';
