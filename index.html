@@ -364,14 +364,19 @@
       function renderReport(report) {
         const findings = (report.findings || []).map((f) => `<li>${esc(f)}</li>`).join('');
         const wins = (report.quickWins || []).map((w) => `<li>${esc(w)}</li>`).join('');
+        const roadmap = (report.roadmap || []).map((r) => `<li>${esc(r)}</li>`).join('');
+        const opportunities = (report.opportunities || []).map((o) => `<li>${esc(o)}</li>`).join('');
 
         reportOutput.innerHTML = `
           <h3>Automation Readiness Score: ${esc(report.score ?? 'N/A')}/100</h3>
           <p style="margin-top:0.6rem;">${esc(report.summary || 'Scan complete.')}</p>
+          <p style="margin-top:0.45rem;color:#9ec8ba;">Analysis mode: ${esc(report.analysisType || 'surface')}</p>
           <h4 style="margin-top:1rem;">Detected Friction Points</h4>
           <ul>${findings || '<li>No major friction detected from surface scan.</li>'}</ul>
           <h4 style="margin-top:1rem;">Recommended Quick Wins</h4>
           <ul>${wins || '<li>Lead capture + response automation.</li>'}</ul>
+          ${opportunities ? '<h4 style="margin-top:1rem;">Automation Opportunities</h4><ul>' + opportunities + '</ul>' : ''}
+          ${roadmap ? '<h4 style="margin-top:1rem;">Advanced Roadmap</h4><ul>' + roadmap + '</ul>' : ''}
         `;
       }
 

@@ -17,6 +17,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 DB_PATH = Path(os.getenv("NAI_DB_PATH", BASE_DIR / "data" / "nai_one.db"))
 WEBHOOK_URL = os.getenv("LEAD_WEBHOOK_URL", "").strip()
 TLS_VERIFY = os.getenv("NAI_TLS_VERIFY", "false").strip().lower() in {"1", "true", "yes"}
+LLM_API_KEY = os.getenv("NAI_LLM_API_KEY", "").strip()
+LLM_BASE_URL = os.getenv("NAI_LLM_BASE_URL", "https://openrouter.ai/api/v1").rstrip("/")
+LLM_MODEL = os.getenv("NAI_LLM_MODEL", "openai/gpt-4o-mini")
+LLM_TIMEOUT = float(os.getenv("NAI_LLM_TIMEOUT", "30"))
 
 app = FastAPI(title="Nai One API", version="1.0.0")
 
@@ -163,6 +167,165 @@ def build_report(html: str, url: str) -> dict[str, Any]:
     }
 
 
+def extract_visible_text(html: str, max_chars: int = 9000) -> str:
+    cleaned = re.sub(r"(?is)<(script|style).*?>.*?</\\1>", " ", html)
+    cleaned = re.sub(r"(?s)<[^>]+>", " ", cleaned)
+    cleaned = re.sub(r"\\s+", " ", cleaned).strip()
+    return cleaned[:max_chars]
+
+
+def parse_json_from_text(raw: str) -> dict[str, Any] | None:
+    raw = raw.strip()
+    if not raw:
+        return None
+
+    if raw.startswith("```"):
+        raw = re.sub(r"^```(?:json)?\\s*", "", raw)
+        raw = re.sub(r"\\s*```$", "", raw)
+
+    try:
+        parsed = json.loads(raw)
+        if isinstance(parsed, dict):
+            return parsed
+    except json.JSONDecodeError:
+        pass
+
+    match = re.search(r"\\{.*\\}", raw, flags=re.S)
+    if not match:
+        return None
+
+    try:
+        parsed = json.loads(match.group(0))
+        if isinstance(parsed, dict):
+            return parsed
+    except json.JSONDecodeError:
+        return None
+    return None
+
+
+def normalize_to_list(value: Any) -> list[str]:
+    if isinstance(value, list):
+        out: list[str] = []
+        for item in value:
+            if isinstance(item, dict):
+                title = str(item.get("title") or item.get("issue") or item.get("name") or "").strip()
+                detail = str(item.get("detail") or item.get("description") or "").strip()
+                status = str(item.get("status") or "").strip()
+                combined = " - ".join([part for part in [title, detail] if part])
+                if status:
+                    combined = f"[{status}] {combined}" if combined else f"[{status}]"
+                if combined:
+                    out.append(combined)
+            else:
+                text = str(item).strip()
+                if text:
+                    out.append(text)
+        return out
+
+    if isinstance(value, str) and value.strip():
+        return [value.strip()]
+    return []
+
+
+async def generate_llm_report(
+    url: str,
+    heuristic_report: dict[str, Any],
+    page_text: str,
+) -> dict[str, Any] | None:
+    if not LLM_API_KEY:
+        return None
+
+    system_prompt = """
+You are Nai One, an AI business automation auditor developed by Attikon Lab.
+Analyze the business website and produce a structured diagnostic focused on operational friction,
+revenue leakage, and automation opportunities. Avoid generic SEO commentary.
+Do not hallucinate missing features. Classify signals as CONFIRMED, LIKELY, UNKNOWN, or MISSING.
+
+Return ONLY valid JSON with this shape:
+{
+  "executiveSummary": "string",
+  "businessIdentification": {
+    "industry": "string",
+    "businessModel": "string",
+    "b2bOrB2c": "string",
+    "serviceOrProduct": "string",
+    "localOrDigital": "string",
+    "primaryRevenueFunnel": "string",
+    "customerJourney": "string"
+  },
+  "revenueLeakage": [{"title":"string","detail":"string","status":"CONFIRMED|LIKELY|UNKNOWN|MISSING"}],
+  "automationOpportunities": [{"title":"string","impact":"High|Medium|Low","difficulty":"Easy|Medium|Advanced","roi":"string"}],
+  "quickWins": ["string"],
+  "advancedRoadmap": ["string"],
+  "automationReadinessScore": 0
+}
+"""
+
+    user_prompt = {
+        "url": url,
+        "heuristicReport": heuristic_report,
+        "visiblePageTextExcerpt": page_text,
+        "instruction": "Infer operational structure from available signals and keep recommendations commercially actionable.",
+    }
+
+    payload = {
+        "model": LLM_MODEL,
+        "temperature": 0.2,
+        "messages": [
+            {"role": "system", "content": system_prompt.strip()},
+            {"role": "user", "content": json.dumps(user_prompt, ensure_ascii=True)},
+        ],
+    }
+
+    headers = {
+        "Authorization": f"Bearer {LLM_API_KEY}",
+        "Content-Type": "application/json",
+        "HTTP-Referer": "https://attikonlab.uk",
+        "X-Title": "Attikon Lab Nai One",
+    }
+
+    try:
+        async with httpx.AsyncClient(timeout=LLM_TIMEOUT, verify=TLS_VERIFY) as client:
+            res = await client.post(f"{LLM_BASE_URL}/chat/completions", headers=headers, json=payload)
+            res.raise_for_status()
+            data = res.json()
+    except Exception:
+        return None
+
+    content = (
+        data.get("choices", [{}])[0]
+        .get("message", {})
+        .get("content", "")
+    )
+    parsed = parse_json_from_text(str(content))
+    if not parsed:
+        return None
+
+    llm_score = parsed.get("automationReadinessScore")
+    try:
+        llm_score = int(llm_score)
+    except (TypeError, ValueError):
+        llm_score = heuristic_report.get("score", 0)
+
+    llm_score = max(0, min(100, llm_score))
+
+    leakage = normalize_to_list(parsed.get("revenueLeakage"))
+    quick_wins = normalize_to_list(parsed.get("quickWins"))
+    roadmap = normalize_to_list(parsed.get("advancedRoadmap"))
+    opportunities = normalize_to_list(parsed.get("automationOpportunities"))
+
+    return {
+        "score": llm_score,
+        "summary": str(parsed.get("executiveSummary") or heuristic_report.get("summary") or "").strip(),
+        "findings": leakage[:8] or heuristic_report.get("findings", []),
+        "quickWins": quick_wins[:6] or heuristic_report.get("quickWins", []),
+        "roadmap": roadmap[:6],
+        "opportunities": opportunities[:8],
+        "analysisType": "surface-html-heuristic-v2+llm",
+        "llmModel": LLM_MODEL,
+    }
+
+
 def save_lead(payload: ScanRequest, report: dict[str, Any], request: Request) -> None:
     with sqlite3.connect(DB_PATH) as conn:
         conn.execute(
@@ -232,6 +395,10 @@ async def scan(payload: ScanRequest, request: Request) -> dict[str, Any]:
         raise HTTPException(status_code=422, detail="Unable to fetch business URL") from exc
 
     report = build_report(html, normalized)
+    visible_text = extract_visible_text(html)
+    llm_report = await generate_llm_report(normalized, report, visible_text)
+    if llm_report:
+        report = llm_report
     payload.businessUrl = normalized
 
     save_lead(payload, report, request)
