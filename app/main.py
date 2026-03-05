@@ -236,42 +236,71 @@ async def generate_llm_report(
         return None
 
     system_prompt = """
-You are Nai One, an AI business operations and automation auditor developed by Attikon Lab.
-You are not a website SEO scanner. You produce operational intelligence for business owners.
+You are NAI ONE, AI Operations Architect at ATTIKON LAB.
+You do NOT produce website audits. You produce an AI Agent Deployment Blueprint.
 
-Core rule:
-- Website signals are only the starting point.
-- Reconstruct the likely end-to-end operating model of the business.
-- Diagnose revenue leakage and operational friction.
-- Propose automation opportunities in business-outcome language.
-- Never mention implementation tools/vendors (no Zapier, Airtable, HubSpot, etc).
+Your deliverable must explain:
+1) where revenue/time leaks now,
+2) what the deployed AI agent does day-to-day,
+3) what systems/channels must be connected,
+4) how deployment works on VPS in 7/30/90-day logic,
+5) what outcomes to expect.
 
-Signal confidence:
-- Classify inferred signals as CONFIRMED, LIKELY, UNKNOWN, or MISSING.
-- Never fabricate unavailable facts.
+Core product: Attikon Lab deploys a dedicated OpenClaw-style AI agent on VPS as the business's central intake + response + workflow routing layer.
+
+Rules:
+- Use practical business language. No buzzwords/tool soup.
+- Do not mention random SaaS tools unless essential.
+- Label evidence confidence with CONFIRMED / LIKELY / UNKNOWN / MISSING.
+- Never fabricate integrations/features.
+- Include one empathetic operational reality line (rush hours, staff overload, seasonality).
+- Make it skimmable: short paragraphs, bullets, clear action titles.
 
 Return ONLY valid JSON with this exact shape:
 {
+  "whatYouGet": "string",
   "executiveSummary": "string",
   "businessOperationalModel": {
     "businessType": "string",
     "revenueModel": "string",
     "customerTypes": ["string"],
     "demandChannels": ["string"],
-    "workflowStages": ["string"]
+    "workflowStages": ["string"],
+    "seasonality": "string"
+  },
+  "automationReadiness": {
+    "overall": 0,
+    "demandCapture": 0,
+    "responseSpeed": 0,
+    "workflowAutomation": 0,
+    "dataTracking": 0,
+    "trustVisibility": 0,
+    "explanation": "string"
   },
   "operationalFriction": [
     {
       "title": "string",
       "signalStatus": "CONFIRMED|LIKELY|UNKNOWN|MISSING",
       "evidence": "string",
-      "operationalImpact": "string",
-      "businessImpact": "string",
-      "automationOpportunity": "string",
+      "whatIsHappening": "string",
+      "whyItCosts": "string",
+      "fixWeImplement": "string",
       "impact": "High|Medium|Low",
       "difficulty": "Easy|Medium|Advanced"
     }
   ],
+  "agentDayToDay": ["string"],
+  "exampleConversations": ["string"],
+  "systemsToConnectRequired": ["string"],
+  "systemsToConnectOptional": ["string"],
+  "implementationPlan": ["string"],
+  "guardrails": ["string"],
+  "quickWins48h": ["string"],
+  "expectedOutcomes7d": ["string"],
+  "expectedOutcomes30d": ["string"],
+  "expectedOutcomes90d": ["string"],
+  "strategicInsight": "string",
+  "revenueExpansionOpportunities": ["string"],
   "automationOpportunities": [
     {
       "title": "string",
@@ -281,23 +310,8 @@ Return ONLY valid JSON with this exact shape:
       "expectedImpact": "string"
     }
   ],
-  "scoreBreakdown": {
-    "demandCapture": 0,
-    "customerCommunication": 0,
-    "operationalAutomation": 0,
-    "dataInfrastructure": 0,
-    "overall": 0
-  },
-  "strategicInsight": "string",
-  "revenueExpansionOpportunities": ["string"],
-  "aiAgentDeploymentPlan": ["string"],
-  "systemsToConnect": ["string"],
-  "expectedBusinessOutcomes": ["string"],
-  "implementationRoadmap": [
-    {"phase":"Phase 1","title":"string","goal":"string"}
-  ],
-  "nextStep": "string",
-  "quickWins": ["string"]
+  "nextBestAction": "string",
+  "whatWeNeedFromYou": ["string"]
 }
 """
 
@@ -305,7 +319,7 @@ Return ONLY valid JSON with this exact shape:
         "url": url,
         "heuristicReport": heuristic_report,
         "visiblePageTextExcerpt": page_text,
-        "instruction": "Produce an operations-first mini consulting report and include AI agent deployment guidance where justified.",
+        "instruction": "Produce an implementation-driven AI Agent Deployment Blueprint with 7/30/90 day outcomes and one unambiguous Next Best Action.",
     }
 
     payload = {
@@ -342,8 +356,8 @@ Return ONLY valid JSON with this exact shape:
         return None
 
     llm_score = (
-        (parsed.get("scoreBreakdown") or {}).get("overall")
-        if isinstance(parsed.get("scoreBreakdown"), dict)
+        (parsed.get("automationReadiness") or {}).get("overall")
+        if isinstance(parsed.get("automationReadiness"), dict)
         else None
     )
     try:
@@ -354,21 +368,29 @@ Return ONLY valid JSON with this exact shape:
     llm_score = max(0, min(100, llm_score))
 
     leakage = normalize_to_list(parsed.get("operationalFriction"))
-    quick_wins = normalize_to_list(parsed.get("quickWins"))
-    roadmap = normalize_to_list(parsed.get("implementationRoadmap"))
+    quick_wins = normalize_to_list(parsed.get("quickWins48h"))
+    roadmap = normalize_to_list(parsed.get("implementationPlan"))
     opportunities = normalize_to_list(parsed.get("automationOpportunities"))
     revenue_expansion = normalize_to_list(parsed.get("revenueExpansionOpportunities"))
-    deployment_plan = normalize_to_list(parsed.get("aiAgentDeploymentPlan"))
-    systems_to_connect = normalize_to_list(parsed.get("systemsToConnect"))
-    expected_outcomes = normalize_to_list(parsed.get("expectedBusinessOutcomes"))
+    deployment_plan = normalize_to_list(parsed.get("agentDayToDay"))
+    systems_required = normalize_to_list(parsed.get("systemsToConnectRequired"))
+    systems_optional = normalize_to_list(parsed.get("systemsToConnectOptional"))
+    expected_7d = normalize_to_list(parsed.get("expectedOutcomes7d"))
+    expected_30d = normalize_to_list(parsed.get("expectedOutcomes30d"))
+    expected_90d = normalize_to_list(parsed.get("expectedOutcomes90d"))
+    guardrails = normalize_to_list(parsed.get("guardrails"))
+    what_we_need = normalize_to_list(parsed.get("whatWeNeedFromYou"))
+    example_conversations = normalize_to_list(parsed.get("exampleConversations"))
     strategic_insight = str(parsed.get("strategicInsight") or "").strip()
-    next_step = str(parsed.get("nextStep") or "").strip()
-    score_breakdown = parsed.get("scoreBreakdown") if isinstance(parsed.get("scoreBreakdown"), dict) else {}
+    next_step = str(parsed.get("nextBestAction") or "").strip()
+    what_you_get = str(parsed.get("whatYouGet") or "").strip()
+    score_breakdown = parsed.get("automationReadiness") if isinstance(parsed.get("automationReadiness"), dict) else {}
     op_model = parsed.get("businessOperationalModel") if isinstance(parsed.get("businessOperationalModel"), dict) else {}
 
     return {
         "score": llm_score,
         "summary": str(parsed.get("executiveSummary") or heuristic_report.get("summary") or "").strip(),
+        "whatYouGet": what_you_get,
         "findings": leakage[:8] or heuristic_report.get("findings", []),
         "quickWins": quick_wins[:6] or heuristic_report.get("quickWins", []),
         "roadmap": roadmap[:6],
@@ -376,9 +398,15 @@ Return ONLY valid JSON with this exact shape:
         "strategicInsight": strategic_insight,
         "revenueExpansion": revenue_expansion[:6],
         "deploymentPlan": deployment_plan[:8],
-        "systemsToConnect": systems_to_connect[:8],
-        "expectedOutcomes": expected_outcomes[:8],
+        "systemsToConnectRequired": systems_required[:8],
+        "systemsToConnectOptional": systems_optional[:8],
+        "expectedOutcomes7d": expected_7d[:6],
+        "expectedOutcomes30d": expected_30d[:6],
+        "expectedOutcomes90d": expected_90d[:6],
+        "guardrails": guardrails[:8],
+        "exampleConversations": example_conversations[:4],
         "nextStep": next_step,
+        "whatWeNeedFromYou": what_we_need[:8],
         "scoreBreakdown": score_breakdown,
         "operationalModel": op_model,
         "analysisType": "surface-html-heuristic-v2+llm",

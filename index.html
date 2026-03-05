@@ -426,8 +426,14 @@
         const opportunities = (report.opportunities || []).map((o) => `<li>${esc(o)}</li>`).join('');
         const expansion = (report.revenueExpansion || []).map((e) => `<li>${esc(e)}</li>`).join('');
         const deployment = (report.deploymentPlan || []).map((d) => `<li>${esc(d)}</li>`).join('');
-        const systems = (report.systemsToConnect || []).map((s) => `<li>${esc(s)}</li>`).join('');
-        const outcomes = (report.expectedOutcomes || []).map((o) => `<li>${esc(o)}</li>`).join('');
+        const systemsRequired = (report.systemsToConnectRequired || []).map((s) => `<li>${esc(s)}</li>`).join('');
+        const systemsOptional = (report.systemsToConnectOptional || []).map((s) => `<li>${esc(s)}</li>`).join('');
+        const outcomes7 = (report.expectedOutcomes7d || []).map((o) => `<li>${esc(o)}</li>`).join('');
+        const outcomes30 = (report.expectedOutcomes30d || []).map((o) => `<li>${esc(o)}</li>`).join('');
+        const outcomes90 = (report.expectedOutcomes90d || []).map((o) => `<li>${esc(o)}</li>`).join('');
+        const guardrails = (report.guardrails || []).map((g) => `<li>${esc(g)}</li>`).join('');
+        const examples = (report.exampleConversations || []).map((ex) => `<li>${esc(ex)}</li>`).join('');
+        const needed = (report.whatWeNeedFromYou || []).map((n) => `<li>${esc(n)}</li>`).join('');
         const model = report.operationalModel || {};
         const scoreBreakdown = report.scoreBreakdown || {};
         const customerTypes = (model.customerTypes || []).map((x) => esc(x)).join(', ');
@@ -441,6 +447,7 @@
 
         reportOutput.innerHTML = `
           <h3>Automation Readiness Score: ${esc(report.score ?? 'N/A')}/100</h3>
+          ${report.whatYouGet ? '<p style="margin-top:0.6rem;"><strong>What you get:</strong> ' + esc(report.whatYouGet) + '</p>' : ''}
           <p style="margin-top:0.6rem;">${esc(report.summary || 'Scan complete.')}</p>
           <p style="margin-top:0.45rem;color:#9ec8ba;">Analysis mode: ${esc(report.analysisType || 'surface')}</p>
           ${model.businessType ? `
@@ -459,21 +466,29 @@
           <h4 style="margin-top:1rem;">Score Breakdown</h4>
           <ul>
             <li>Demand capture: ${esc(scoreBreakdown.demandCapture ?? 'N/A')}/100</li>
-            <li>Customer communication: ${esc(scoreBreakdown.customerCommunication ?? 'N/A')}/100</li>
-            <li>Operational automation: ${esc(scoreBreakdown.operationalAutomation ?? 'N/A')}/100</li>
-            <li>Data infrastructure: ${esc(scoreBreakdown.dataInfrastructure ?? 'N/A')}/100</li>
+            <li>Response speed: ${esc(scoreBreakdown.responseSpeed ?? scoreBreakdown.customerCommunication ?? 'N/A')}/100</li>
+            <li>Workflow automation: ${esc(scoreBreakdown.workflowAutomation ?? scoreBreakdown.operationalAutomation ?? 'N/A')}/100</li>
+            <li>Data/tracking: ${esc(scoreBreakdown.dataTracking ?? scoreBreakdown.dataInfrastructure ?? 'N/A')}/100</li>
+            <li>Trust/visibility: ${esc(scoreBreakdown.trustVisibility ?? 'N/A')}/100</li>
           </ul>
+          ${scoreBreakdown.explanation ? '<p>' + esc(scoreBreakdown.explanation) + '</p>' : ''}
           ` : ''}
           <h4 style="margin-top:1rem;">Recommended Quick Wins</h4>
           <ul>${wins || '<li>Lead capture + response automation.</li>'}</ul>
           ${report.strategicInsight ? '<h4 style="margin-top:1rem;">Strategic Insight</h4><p>' + esc(report.strategicInsight) + '</p>' : ''}
           ${opportunities ? '<h4 style="margin-top:1rem;">Automation Opportunities</h4><ul>' + opportunities + '</ul>' : ''}
           ${expansion ? '<h4 style="margin-top:1rem;">Revenue Expansion Opportunities</h4><ul>' + expansion + '</ul>' : ''}
-          ${systems ? '<h4 style="margin-top:1rem;">Systems To Connect</h4><ul>' + systems + '</ul>' : ''}
+          ${systemsRequired ? '<h4 style="margin-top:1rem;">Systems To Connect (Required)</h4><ul>' + systemsRequired + '</ul>' : ''}
+          ${systemsOptional ? '<h4 style="margin-top:1rem;">Systems To Connect (Optional)</h4><ul>' + systemsOptional + '</ul>' : ''}
           ${deployment ? '<h4 style="margin-top:1rem;">AI Agent Deployment Plan</h4><ul>' + deployment + '</ul>' : ''}
-          ${outcomes ? '<h4 style="margin-top:1rem;">Expected Business Outcomes</h4><ul>' + outcomes + '</ul>' : ''}
+          ${guardrails ? '<h4 style="margin-top:1rem;">Policies & Guardrails</h4><ul>' + guardrails + '</ul>' : ''}
+          ${examples ? '<h4 style="margin-top:1rem;">Example Conversations</h4><ul>' + examples + '</ul>' : ''}
+          ${outcomes7 ? '<h4 style="margin-top:1rem;">Expected Outcomes (7 days)</h4><ul>' + outcomes7 + '</ul>' : ''}
+          ${outcomes30 ? '<h4 style="margin-top:1rem;">Expected Outcomes (30 days)</h4><ul>' + outcomes30 + '</ul>' : ''}
+          ${outcomes90 ? '<h4 style="margin-top:1rem;">Expected Outcomes (90 days)</h4><ul>' + outcomes90 + '</ul>' : ''}
           ${roadmap ? '<h4 style="margin-top:1rem;">Attikon Implementation Roadmap</h4><ul>' + roadmap + '</ul>' : ''}
-          ${report.nextStep ? '<h4 style="margin-top:1rem;">Next Step</h4><p>' + esc(report.nextStep) + '</p>' : ''}
+          ${report.nextStep ? '<h4 style="margin-top:1rem;">Next Best Action</h4><p><strong>' + esc(report.nextStep) + '</strong></p>' : ''}
+          ${needed ? '<h4 style="margin-top:1rem;">What We Need From You To Start</h4><ul>' + needed + '</ul>' : ''}
           <div class="follow-cta">
             <a class="btn" href="mailto:albi@agentmail.to?subject=${followSubject}&body=${followBody}">Request Deployment Follow-Up</a>
             <a class="link" href="mailto:albi@agentmail.to?subject=${followSubject}">Send Full Report by Email</a>
